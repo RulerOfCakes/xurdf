@@ -33,6 +33,10 @@ pub enum Geometry {
         radius: f64,
         length: f64,
     },
+    Capsule {
+        radius: f64,
+        length: f64,
+    },
     Sphere {
         radius: f64,
     },

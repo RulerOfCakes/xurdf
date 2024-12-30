@@ -102,6 +102,30 @@ impl Cylinder {
 
 #[pyclass]
 #[derive(Clone, Debug)]
+struct Capsule {
+    #[pyo3(get, set)]
+    radius: f64,
+    #[pyo3(get, set)]
+    length: f64,
+}
+
+#[pymethods]
+impl Capsule {
+    #[new]
+    #[args(radius = "1.0", length = "1.0")]
+    fn new(radius: f64, length: f64) -> Self {
+        Capsule { radius, length }
+    }
+    fn __repr__(&self) -> String {
+        format!(
+            "Capsule(radius: {:?}, length: {:?})",
+            self.radius, self.length
+        )
+    }
+}
+
+#[pyclass]
+#[derive(Clone, Debug)]
 struct Sphere {
     #[pyo3(get, set)]
     radius: f64,
@@ -150,6 +174,7 @@ impl Mesh {
 enum Geometry {
     Box(Box),
     Cylinder(Cylinder),
+    Capsule(Capsule),
     Sphere(Sphere),
     Mesh(Mesh),
 }
@@ -159,6 +184,7 @@ impl IntoPy<PyObject> for Geometry {
         match self {
             Geometry::Box(b) => b.into_py(py),
             Geometry::Cylinder(c) => c.into_py(py),
+            Geometry::Capsule(c) => c.into_py(py),
             Geometry::Sphere(s) => s.into_py(py),
             Geometry::Mesh(m) => m.into_py(py),
         }
@@ -338,6 +364,10 @@ fn convert_robot(robot: xurdf::Robot) -> Robot {
                                 length: *length,
                             })
                         }
+                        xurdf::Geometry::Capsule { radius, length } => Geometry::Capsule(Capsule {
+                            radius: *radius,
+                            length: *length,
+                        }),
                         xurdf::Geometry::Sphere { radius } => {
                             Geometry::Sphere(Sphere { radius: *radius })
                         }
@@ -370,6 +400,10 @@ fn convert_robot(robot: xurdf::Robot) -> Robot {
                                 length: *length,
                             })
                         }
+                        xurdf::Geometry::Capsule { radius, length } => Geometry::Capsule(Capsule {
+                            radius: *radius,
+                            length: *length,
+                        }),
                         xurdf::Geometry::Sphere { radius } => {
                             Geometry::Sphere(Sphere { radius: *radius })
                         }

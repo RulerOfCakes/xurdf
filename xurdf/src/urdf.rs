@@ -131,6 +131,20 @@ fn parse_geometry(node: roxmltree::Node) -> Result<Geometry> {
                     length: length,
                 });
             }
+            "capsule" => {
+                let radius = child
+                    .attribute("radius")
+                    .ok_or(anyhow::anyhow!("Failed to parse capsule radius"))?
+                    .parse()?;
+                let length = child
+                    .attribute("length")
+                    .ok_or(anyhow::anyhow!("Failed to parse capsule length"))?
+                    .parse()?;
+                return Ok(Geometry::Capsule {
+                    radius: radius,
+                    length: length,
+                });
+            }
             "sphere" => {
                 let radius = child
                     .attribute("radius")
